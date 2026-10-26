@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hospital.mapper.DepartmentMapper">
+
+    <resultMap id="DepartmentResultMap" type="com.example.hospital.entity.Department">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="description" column="description"/>
+        <result property="location" column="location"/>
+        <result property="phone" column="phone"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, name, code, description, location, phone, sort_order, status, create_time, update_time
+    </sql>
+
+    <select id="findPublicList" resultMap="DepartmentResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM department
+        WHERE status = 1
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="findById" resultMap="DepartmentResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM department
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByName" resultMap="DepartmentResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM department
+        WHERE name = #{name}
+        LIMIT 1
+    </select>
+
+    <select id="findByCode" resultMap="DepartmentResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM department
+        WHERE code = #{code}
+        LIMIT 1
+    </select>
+
+    <sql id="AdminWhere">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%') OR code LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findAdminList" resultMap="DepartmentResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM department
+        <include refid="AdminWhere"/>
+        ORDER BY sort_order ASC, id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAdminList" resultType="long">
+        SELECT COUNT(*)
+        FROM department
+        <include refid="AdminWhere"/>
+    </select>
+
+    <insert id="insert" parameterType="com.example.hospital.entity.Department"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO department (name, code, description, location, phone, sort_order, status)
+        VALUES (#{name}, #{code}, #{description}, #{location}, #{phone}, #{sortOrder}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.example.hospital.entity.Department">
+        UPDATE department
+        SET name = #{name},
+            code = #{code},
+            description = #{description},
+            location = #{location},
+            phone = #{phone},
+            sort_order = #{sortOrder},
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE department
+        SET status = #{status}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>

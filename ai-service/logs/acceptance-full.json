@@ -1,0 +1,30 @@
+{
+  "baseline_slots": 15,
+  "new_appointment": {
+    "appointmentNo": "AP20261025C15C6C70",
+    "createTime": "2026-10-25T15:43:03",
+    "departmentId": 1,
+    "departmentName": "内科",
+    "doctorId": 2,
+    "doctorName": "李娜",
+    "doctorTitle": "副主任医师",
+    "endTime": "17:30:00",
+    "id": 30,
+    "patientName": "李四",
+    "patientPhone": "13800000002",
+    "period": 2,
+    "periodText": "下午",
+    "registrationFee": 25.0,
+    "scheduleId": 10,
+    "startTime": "14:00:00",
+    "status": 0,
+    "statusText": "待就诊",
+    "updateTime": "2026-10-25T15:43:03",
+    "userId": 3,
+    "visitDate": "2026-10-27"
+  },
+  "duplicate_status": 409,
+  "duplicate_message": "您已预约该排班，请勿重复预约",
+  "final_status": 2,
+  "final_slots": 15
+}

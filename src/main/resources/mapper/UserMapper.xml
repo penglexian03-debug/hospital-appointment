@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hospital.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.example.hospital.entity.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="realName" column="real_name"/>
+        <result property="phone" column="phone"/>
+        <result property="gender" column="gender"/>
+        <result property="email" column="email"/>
+        <result property="role" column="role"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, username, password, real_name, phone, gender, email, role, status, create_time, update_time
+    </sql>
+
+    <select id="findByUsername" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sys_user
+        WHERE username = #{username}
+        LIMIT 1
+    </select>
+
+    <select id="findByPhone" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sys_user
+        WHERE phone = #{phone}
+        LIMIT 1
+    </select>
+
+    <select id="findById" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sys_user
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.hospital.entity.User"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (username, password, real_name, phone, gender, email, role, status)
+        VALUES (#{username}, #{password}, #{realName}, #{phone}, #{gender}, #{email}, #{role}, #{status})
+    </insert>
+
+    <update id="updateProfile" parameterType="com.example.hospital.entity.User">
+        UPDATE sys_user
+        SET real_name = #{realName},
+            phone = #{phone},
+            gender = #{gender},
+            email = #{email},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <sql id="AdminWhere">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (username LIKE CONCAT('%', #{keyword}, '%')
+                    OR real_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR phone LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="role != null">
+                AND role = #{role}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findAdminList" resultMap="UserResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM sys_user
+        <include refid="AdminWhere"/>
+        ORDER BY id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAdminList" resultType="long">
+        SELECT COUNT(*)
+        FROM sys_user
+        <include refid="AdminWhere"/>
+    </select>
+
+    <update id="updateStatus">
+        UPDATE sys_user
+        SET status = #{status}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="countActiveAdmins" resultType="long">
+        SELECT COUNT(*)
+        FROM sys_user
+        WHERE role = 2 AND status = 1
+    </select>
+</mapper>

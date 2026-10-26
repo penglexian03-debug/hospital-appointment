@@ -1,0 +1,49 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Project ###
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+runtime/redis/data/
+runtime/redis/*.log
+runtime/redis/*.pid
+.env
+*.log
+
+# AI acceptance artifacts: keep only final evidence
+ai-service/logs/*.json
+!ai-service/logs/acceptance-full.json
+ai-service/logs/ui-ai-open.png
+ai-service/logs/ui-profile.png

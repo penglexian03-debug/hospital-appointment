@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hospital.mapper.AppointmentMapper">
+
+    <resultMap id="ScheduleBookingInfoResultMap" type="com.example.hospital.vo.ScheduleBookingInfo">
+        <id property="id" column="id"/>
+        <result property="doctorId" column="doctor_id"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="doctorName" column="doctor_name"/>
+        <result property="doctorTitle" column="doctor_title"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="doctorStatus" column="doctor_status"/>
+        <result property="departmentStatus" column="department_status"/>
+        <result property="workDate" column="work_date" javaType="java.time.LocalDate" jdbcType="DATE"/>
+        <result property="period" column="period"/>
+        <result property="startTime" column="start_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="endTime" column="end_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="totalSlots" column="total_slots"/>
+        <result property="availableSlots" column="available_slots"/>
+        <result property="registrationFee" column="registration_fee"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap id="AppointmentVOResultMap" type="com.example.hospital.vo.AppointmentVO">
+        <id property="id" column="id"/>
+        <result property="appointmentNo" column="appointment_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="scheduleId" column="schedule_id"/>
+        <result property="doctorId" column="doctor_id"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="doctorName" column="doctor_name"/>
+        <result property="doctorTitle" column="doctor_title"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="visitDate" column="visit_date" javaType="java.time.LocalDate" jdbcType="DATE"/>
+        <result property="period" column="period"/>
+        <result property="startTime" column="start_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="endTime" column="end_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="registrationFee" column="registration_fee"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="patientPhone" column="patient_phone"/>
+        <result property="status" column="status"/>
+        <result property="cancelReason" column="cancel_reason"/>
+        <result property="cancelTime" column="cancel_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="AppointmentResultMap" type="com.example.hospital.entity.Appointment">
+        <id property="id" column="id"/>
+        <result property="appointmentNo" column="appointment_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="scheduleId" column="schedule_id"/>
+        <result property="doctorId" column="doctor_id"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="doctorName" column="doctor_name"/>
+        <result property="doctorTitle" column="doctor_title"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="visitDate" column="visit_date" javaType="java.time.LocalDate" jdbcType="DATE"/>
+        <result property="period" column="period"/>
+        <result property="startTime" column="start_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="endTime" column="end_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="registrationFee" column="registration_fee"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="patientPhone" column="patient_phone"/>
+        <result property="status" column="status"/>
+        <result property="cancelReason" column="cancel_reason"/>
+        <result property="cancelTime" column="cancel_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="AppointmentColumns">
+        id, appointment_no, user_id, schedule_id, doctor_id, department_id,
+        doctor_name, doctor_title, department_name, visit_date, period,
+        start_time, end_time, registration_fee, patient_name, patient_phone,
+        status, cancel_reason, cancel_time, create_time, update_time
+    </sql>
+
+    <update id="decreaseAvailableSlots">
+        UPDATE schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        SET sch.available_slots = sch.available_slots - 1,
+            sch.update_time = NOW()
+        WHERE sch.id = #{scheduleId}
+          AND sch.status = 1
+          AND doc.status = 1
+          AND dept.status = 1
+          AND sch.available_slots &gt; 0
+          AND CONCAT(sch.work_date, ' ', sch.start_time) &gt; NOW()
+    </update>
+
+    <select id="findBookingInfo" resultMap="ScheduleBookingInfoResultMap">
+        SELECT sch.id,
+               sch.doctor_id,
+               doc.name AS doctor_name,
+               doc.title AS doctor_title,
+               doc.department_id,
+               dept.name AS department_name,
+               doc.status AS doctor_status,
+               dept.status AS department_status,
+               sch.work_date,
+               sch.period,
+               sch.start_time,
+               sch.end_time,
+               sch.total_slots,
+               sch.available_slots,
+               sch.registration_fee,
+               sch.status
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        WHERE sch.id = #{scheduleId}
+    </select>
+
+    <select id="findBookingInfoForUpdate" resultMap="ScheduleBookingInfoResultMap">
+        SELECT sch.id,
+               sch.doctor_id,
+               doc.name AS doctor_name,
+               doc.title AS doctor_title,
+               doc.department_id,
+               dept.name AS department_name,
+               doc.status AS doctor_status,
+               dept.status AS department_status,
+               sch.work_date,
+               sch.period,
+               sch.start_time,
+               sch.end_time,
+               sch.total_slots,
+               sch.available_slots,
+               sch.registration_fee,
+               sch.status
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        WHERE sch.id = #{scheduleId}
+        FOR UPDATE
+    </select>
+
+    <select id="countActiveByUserAndSchedule" resultType="long">
+        SELECT COUNT(*)
+        FROM appointment
+        WHERE user_id = #{userId}
+          AND schedule_id = #{scheduleId}
+          AND status = 0
+    </select>
+
+    <insert id="insert" parameterType="com.example.hospital.entity.Appointment"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO appointment
+            (appointment_no, user_id, schedule_id, doctor_id, department_id,
+             doctor_name, doctor_title, department_name, visit_date, period,
+             start_time, end_time, registration_fee, patient_name, patient_phone, status)
+        VALUES
+            (#{appointmentNo}, #{userId}, #{scheduleId}, #{doctorId}, #{departmentId},
+             #{doctorName}, #{doctorTitle}, #{departmentName}, #{visitDate}, #{period},
+             #{startTime}, #{endTime}, #{registrationFee}, #{patientName}, #{patientPhone}, #{status})
+    </insert>
+
+    <select id="findById" resultMap="AppointmentVOResultMap">
+        SELECT <include refid="AppointmentColumns"/>
+        FROM appointment
+        WHERE id = #{id}
+    </select>
+
+    <sql id="MyWhere">
+        <where>
+            user_id = #{userId}
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (appointment_no LIKE CONCAT('%', #{keyword}, '%')
+                    OR doctor_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR department_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="startDate != null">
+                AND visit_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND visit_date &lt;= #{endDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findMyList" resultMap="AppointmentVOResultMap">
+        SELECT <include refid="AppointmentColumns"/>
+        FROM appointment
+        <include refid="MyWhere"/>
+        ORDER BY create_time DESC, id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countMyList" resultType="long">
+        SELECT COUNT(*)
+        FROM appointment
+        <include refid="MyWhere"/>
+    </select>
+
+    <sql id="AdminAppointmentWhere">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (appointment_no LIKE CONCAT('%', #{keyword}, '%')
+                    OR patient_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR patient_phone LIKE CONCAT('%', #{keyword}, '%')
+                    OR doctor_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR department_name LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="doctorId != null">
+                AND doctor_id = #{doctorId}
+            </if>
+            <if test="departmentId != null">
+                AND department_id = #{departmentId}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="startDate != null">
+                AND visit_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND visit_date &lt;= #{endDate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findAdminList" resultMap="AppointmentVOResultMap">
+        SELECT <include refid="AppointmentColumns"/>
+        FROM appointment
+        <include refid="AdminAppointmentWhere"/>
+        ORDER BY create_time DESC, id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAdminList" resultType="long">
+        SELECT COUNT(*)
+        FROM appointment
+        <include refid="AdminAppointmentWhere"/>
+    </select>
+
+    <select id="findByIdForUpdate" resultMap="AppointmentResultMap">
+        SELECT <include refid="AppointmentColumns"/>
+        FROM appointment
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+    <update id="cancel">
+        UPDATE appointment
+        SET status = 2,
+            cancel_reason = #{cancelReason},
+            cancel_time = NOW(),
+            update_time = NOW()
+        WHERE id = #{id}
+          AND status = 0
+    </update>
+
+    <update id="restoreAvailableSlots">
+        UPDATE schedule
+        SET available_slots = available_slots + 1,
+            update_time = NOW()
+        WHERE id = #{scheduleId}
+          AND available_slots &lt; total_slots
+    </update>
+
+    <update id="updateStatusFromPending">
+        UPDATE appointment
+        SET status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+          AND status = 0
+    </update>
+</mapper>

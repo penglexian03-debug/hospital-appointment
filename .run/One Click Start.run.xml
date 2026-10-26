@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="一键启动" type="CompoundRunConfigurationType">
+    <toRun name="后端服务" type="MavenRunConfiguration" />
+    <toRun name="前端服务" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

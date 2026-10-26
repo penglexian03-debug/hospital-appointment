@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hospital.mapper.DashboardMapper">
+
+    <sql id="AppointmentColumns">
+        id, appointment_no, user_id, schedule_id, doctor_id, department_id,
+        doctor_name, doctor_title, department_name, visit_date, period,
+        start_time, end_time, registration_fee, patient_name, patient_phone,
+        status, cancel_reason, cancel_time, create_time, update_time
+    </sql>
+
+    <select id="countUsers" resultType="long">
+        SELECT COUNT(*) FROM sys_user
+    </select>
+
+    <select id="countPatients" resultType="long">
+        SELECT COUNT(*) FROM sys_user WHERE role = 1
+    </select>
+
+    <select id="countDoctors" resultType="long">
+        SELECT COUNT(*) FROM doctor
+    </select>
+
+    <select id="countDepartments" resultType="long">
+        SELECT COUNT(*) FROM department
+    </select>
+
+    <select id="countSchedules" resultType="long">
+        SELECT COUNT(*) FROM schedule
+    </select>
+
+    <select id="countUpcomingSchedules" resultType="long">
+        SELECT COUNT(*)
+        FROM schedule
+        WHERE status = 1
+          AND CONCAT(work_date, ' ', start_time) &gt; NOW()
+    </select>
+
+    <select id="countAppointments" resultType="long">
+        SELECT COUNT(*) FROM appointment
+    </select>
+
+    <select id="countAppointmentsByStatus" resultType="long">
+        SELECT COUNT(*) FROM appointment WHERE status = #{status}
+    </select>
+
+    <select id="countTodayAppointments" resultType="long">
+        SELECT COUNT(*)
+        FROM appointment
+        WHERE visit_date = CURDATE()
+          AND status &lt;&gt; 2
+    </select>
+
+    <select id="findRecentAppointments" resultType="com.example.hospital.vo.AppointmentVO">
+        SELECT <include refid="AppointmentColumns"/>
+        FROM appointment
+        ORDER BY create_time DESC, id DESC
+        LIMIT #{limit}
+    </select>
+</mapper>

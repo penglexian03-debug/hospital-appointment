@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hospital.mapper.ScheduleMapper">
+
+    <resultMap id="ScheduleResultMap" type="com.example.hospital.entity.Schedule">
+        <id property="id" column="id"/>
+        <result property="doctorId" column="doctor_id"/>
+        <result property="workDate" column="work_date" javaType="java.time.LocalDate" jdbcType="DATE"/>
+        <result property="period" column="period"/>
+        <result property="startTime" column="start_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="endTime" column="end_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="totalSlots" column="total_slots"/>
+        <result property="availableSlots" column="available_slots"/>
+        <result property="registrationFee" column="registration_fee"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="ScheduleVOResultMap" type="com.example.hospital.vo.ScheduleVO">
+        <id property="id" column="id"/>
+        <result property="doctorId" column="doctor_id"/>
+        <result property="doctorName" column="doctor_name"/>
+        <result property="doctorTitle" column="doctor_title"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="workDate" column="work_date" javaType="java.time.LocalDate" jdbcType="DATE"/>
+        <result property="period" column="period"/>
+        <result property="startTime" column="start_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="endTime" column="end_time" javaType="java.time.LocalTime" jdbcType="TIME"/>
+        <result property="totalSlots" column="total_slots"/>
+        <result property="availableSlots" column="available_slots"/>
+        <result property="bookedSlots" column="booked_slots"/>
+        <result property="registrationFee" column="registration_fee"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="ScheduleVOColumns">
+        sch.id,
+        sch.doctor_id,
+        doc.name AS doctor_name,
+        doc.title AS doctor_title,
+        doc.department_id,
+        dept.name AS department_name,
+        sch.work_date,
+        sch.period,
+        sch.start_time,
+        sch.end_time,
+        sch.total_slots,
+        sch.available_slots,
+        (sch.total_slots - sch.available_slots) AS booked_slots,
+        sch.registration_fee,
+        sch.status,
+        sch.create_time,
+        sch.update_time
+    </sql>
+
+    <select id="findPublicList" resultMap="ScheduleVOResultMap">
+        SELECT <include refid="ScheduleVOColumns"/>
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        <where>
+            sch.status = 1
+            AND doc.status = 1
+            AND dept.status = 1
+            AND CONCAT(sch.work_date, ' ', sch.start_time) &gt; NOW()
+            <if test="doctorId != null">
+                AND sch.doctor_id = #{doctorId}
+            </if>
+            <if test="departmentId != null">
+                AND doc.department_id = #{departmentId}
+            </if>
+            <if test="startDate != null">
+                AND sch.work_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND sch.work_date &lt;= #{endDate}
+            </if>
+            <if test="period != null">
+                AND sch.period = #{period}
+            </if>
+            <if test="onlyAvailable">
+                AND sch.available_slots &gt; 0
+            </if>
+        </where>
+        ORDER BY sch.work_date ASC, sch.start_time ASC, doc.id ASC
+        LIMIT 500
+    </select>
+
+    <select id="findPublicDetail" resultMap="ScheduleVOResultMap">
+        SELECT <include refid="ScheduleVOColumns"/>
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        WHERE sch.id = #{id}
+          AND sch.status = 1
+          AND doc.status = 1
+          AND dept.status = 1
+          AND CONCAT(sch.work_date, ' ', sch.start_time) &gt; NOW()
+    </select>
+
+    <sql id="AdminWhere">
+        <where>
+            <if test="doctorId != null">
+                AND sch.doctor_id = #{doctorId}
+            </if>
+            <if test="departmentId != null">
+                AND doc.department_id = #{departmentId}
+            </if>
+            <if test="startDate != null">
+                AND sch.work_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND sch.work_date &lt;= #{endDate}
+            </if>
+            <if test="period != null">
+                AND sch.period = #{period}
+            </if>
+            <if test="status != null">
+                AND sch.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findAdminList" resultMap="ScheduleVOResultMap">
+        SELECT <include refid="ScheduleVOColumns"/>
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        <include refid="AdminWhere"/>
+        ORDER BY sch.work_date DESC, sch.start_time DESC, sch.id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAdminList" resultType="long">
+        SELECT COUNT(*)
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        <include refid="AdminWhere"/>
+    </select>
+
+    <select id="findAdminDetail" resultMap="ScheduleVOResultMap">
+        SELECT <include refid="ScheduleVOColumns"/>
+        FROM schedule sch
+        INNER JOIN doctor doc ON doc.id = sch.doctor_id
+        INNER JOIN department dept ON dept.id = doc.department_id
+        WHERE sch.id = #{id}
+    </select>
+
+    <select id="findById" resultMap="ScheduleResultMap">
+        SELECT id, doctor_id, work_date, period, start_time, end_time,
+               total_slots, available_slots, registration_fee, status, create_time, update_time
+        FROM schedule
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByIdForUpdate" resultMap="ScheduleResultMap">
+        SELECT id, doctor_id, work_date, period, start_time, end_time,
+               total_slots, available_slots, registration_fee, status, create_time, update_time
+        FROM schedule
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+    <select id="findByDoctorDatePeriod" resultMap="ScheduleResultMap">
+        SELECT id, doctor_id, work_date, period, start_time, end_time,
+               total_slots, available_slots, registration_fee, status, create_time, update_time
+        FROM schedule
+        WHERE doctor_id = #{doctorId}
+          AND work_date = #{workDate}
+          AND period = #{period}
+        LIMIT 1
+    </select>
+
+    <select id="countActiveAppointments" resultType="long">
+        SELECT COUNT(*)
+        FROM appointment
+        WHERE schedule_id = #{scheduleId}
+          AND status = 0
+    </select>
+
+    <insert id="insert" parameterType="com.example.hospital.entity.Schedule"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO schedule
+            (doctor_id, work_date, period, start_time, end_time,
+             total_slots, available_slots, registration_fee, status)
+        VALUES
+            (#{doctorId}, #{workDate}, #{period}, #{startTime}, #{endTime},
+             #{totalSlots}, #{availableSlots}, #{registrationFee}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.example.hospital.entity.Schedule">
+        UPDATE schedule
+        SET doctor_id = #{doctorId},
+            work_date = #{workDate},
+            period = #{period},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            total_slots = #{totalSlots},
+            available_slots = #{availableSlots},
+            registration_fee = #{registrationFee},
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE schedule
+        SET status = #{status}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+</mapper>
