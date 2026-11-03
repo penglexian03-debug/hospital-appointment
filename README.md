@@ -214,7 +214,7 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ├─ frontend         # Vue 3 前端（views / api / router / stores / layouts）
 ├─ ai-service       # FastAPI + LangGraph（agent / clients / rag / services / knowledge）
 ├─ sql              # 建库、建表、初始化数据、一致性校验
-├─ docs             # 数据库设计、验收与回归报告、界面截图
+├─ docs             # 技术设计、数据库设计、验收与回归报告、界面截图
 ├─ scripts/redis    # 本地 Redis 启停脚本
 └─ .run             # IDEA 共享运行配置
 ```
@@ -252,7 +252,11 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 | 数据库校验 | `mysql -uroot -p -e "source sql/03-verify.sql"` | 号源一致性检查应返回 0 行 |
 | 持续集成 | GitHub Actions | 每次推送自动编译后端、构建前端 |
 
-回归与验收记录见 [`docs/regression-test-report.md`](docs/regression-test-report.md)、[`docs/ai-acceptance-report.md`](docs/ai-acceptance-report.md)，数据库设计见 [`docs/database-design.md`](docs/database-design.md)。
+## 设计文档
+
+- [**技术设计说明**](docs/technical-design.md) — 架构取舍、号源并发方案、AI 编排与安全边界、已知局限、面试高频问答
+- [数据库设计](docs/database-design.md) — 表结构、字段含义、索引与约束
+- [回归测试报告](docs/regression-test-report.md) / [AI 验收报告](docs/ai-acceptance-report.md) / [验收清单](docs/acceptance-checklist.md)
 
 ## 常见问题
 
