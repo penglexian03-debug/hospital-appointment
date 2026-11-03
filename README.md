@@ -60,6 +60,23 @@
 └─ .run             # IntelliJ IDEA 运行配置
 ```
 
+## 本地配置（.env）
+
+数据库密码、JWT 密钥等私有配置不写入仓库。首次运行先复制模板：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+再编辑项目根目录的 `.env`，至少填写数据库密码：
+
+```dotenv
+DB_PASSWORD=你的数据库密码
+JWT_SECRET=至少 32 位的随机字符串
+```
+
+`.env` 已被 `.gitignore` 忽略，不会提交；也可以改用同名的系统环境变量（优先级高于 `.env`）。
+
 ## 数据库初始化
 
 默认连接配置：
@@ -68,16 +85,16 @@
 地址：127.0.0.1:3306
 数据库：hospital_appointment
 用户名：root
-密码：123456
+密码：在你的 .env 中填写 DB_PASSWORD（见下节）
 ```
 
 在项目根目录依次执行：
 
 ```powershell
-& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 --default-character-set=utf8mb4 -e "source sql/00-create-database.sql"
-& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 --default-character-set=utf8mb4 -e "source sql/01-schema.sql"
-& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 --default-character-set=utf8mb4 -e "source sql/02-data.sql"
-& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 --default-character-set=utf8mb4 -e "source sql/03-verify.sql"
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p --default-character-set=utf8mb4 -e "source sql/00-create-database.sql"
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p --default-character-set=utf8mb4 -e "source sql/01-schema.sql"
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p --default-character-set=utf8mb4 -e "source sql/02-data.sql"
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p --default-character-set=utf8mb4 -e "source sql/03-verify.sql"
 ```
 
 注意：`01-schema.sql` 会删除并重建业务表，只适合首次初始化或开发环境重置。
@@ -257,7 +274,7 @@ cd ai-service
 数据库一致性检查：
 
 ```powershell
-& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 --default-character-set=utf8mb4 -e "source sql/03-verify.sql"
+& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p --default-character-set=utf8mb4 -e "source sql/03-verify.sql"
 ```
 
 正常情况下号源一致性检查应返回 0 行。

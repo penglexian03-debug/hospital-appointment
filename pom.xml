@@ -14,8 +14,8 @@
     <groupId>com.example</groupId>
     <artifactId>hospital-appointment</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>hospital-appointment</name>
-    <description>Hospital appointment registration system</description>
+    <name>医院预约挂号系统</name>
+    <description>基于 Spring Boot、Vue 和 AI Agent 的医院预约挂号系统</description>
 
     <properties>
         <java.version>17</java.version>

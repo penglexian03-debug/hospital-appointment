@@ -33,6 +33,7 @@ VALUES
     (7, 6, '周杰', '主治医师', 1, '龋齿、牙周炎', '擅长龋齿充填、牙周基础治疗和口腔卫生指导。', NULL, 1),
     (8, 2, '孙丽', '副主任医师', 2, '乳腺疾病、甲状腺疾病', '擅长乳腺及甲状腺常见疾病的外科诊疗。', NULL, 1);
 
+-- Relative dates keep a clean demo database populated with upcoming schedules.
 INSERT IGNORE INTO schedule
     (id, doctor_id, work_date, period, start_time, end_time, total_slots, available_slots, registration_fee, status)
 VALUES
@@ -49,6 +50,19 @@ VALUES
     (11, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 1, '08:00:00', '12:00:00', 20, 19, 30.00, 1),
     (12, 3, DATE_SUB(CURDATE(), INTERVAL 2 DAY), 2, '14:00:00', '17:30:00', 20, 19, 35.00, 1),
     (13, 2, DATE_SUB(CURDATE(), INTERVAL 3 DAY), 1, '08:00:00', '12:00:00', 15, 15, 25.00, 1);
+
+-- Add fallback slots for tomorrow when this seed file is re-run on an older demo database.
+-- INSERT IGNORE keeps existing doctor/date/period schedules and their booked-slot counts.
+INSERT IGNORE INTO schedule
+    (doctor_id, work_date, period, start_time, end_time, total_slots, available_slots, registration_fee, status)
+VALUES
+    (2, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 1, '08:00:00', '12:00:00', 15, 15, 25.00, 1),
+    (3, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 1, '08:00:00', '12:00:00', 20, 20, 35.00, 1),
+    (4, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 2, '14:00:00', '17:30:00', 15, 15, 25.00, 1),
+    (5, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 1, '08:00:00', '12:00:00', 15, 15, 30.00, 1),
+    (6, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 2, '14:00:00', '17:30:00', 20, 20, 20.00, 1),
+    (7, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 1, '08:00:00', '12:00:00', 10, 10, 20.00, 1),
+    (8, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 2, '14:00:00', '17:30:00', 15, 15, 30.00, 1);
 
 INSERT IGNORE INTO appointment
     (id, appointment_no, user_id, schedule_id, doctor_id, department_id, doctor_name, doctor_title, department_name,
@@ -79,3 +93,4 @@ VALUES
     (8, CONCAT('AP', DATE_FORMAT(CURDATE(), '%Y%m%d'), '0008'), 2, 7, 6, 5, '赵敏', '主治医师', '眼科',
      DATE_ADD(CURDATE(), INTERVAL 3 DAY), 1, '08:00:00', '12:00:00', 20.00, '张三', '13800000001', 0,
      NULL, NULL, NOW(), NOW());
+

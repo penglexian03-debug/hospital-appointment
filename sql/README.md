@@ -10,10 +10,11 @@
 ## PowerShell 执行示例
 
 ```powershell
-mysql -u root -p --default-character-set=utf8mb4 -e "source C:/Users/19097/Downloads/MybatisDemo/demo/demo/sql/00-create-database.sql"
-mysql -u root -p --default-character-set=utf8mb4 -e "source C:/Users/19097/Downloads/MybatisDemo/demo/demo/sql/01-schema.sql"
-mysql -u root -p --default-character-set=utf8mb4 -e "source C:/Users/19097/Downloads/MybatisDemo/demo/demo/sql/02-data.sql"
-mysql -u root -p --default-character-set=utf8mb4 -e "source C:/Users/19097/Downloads/MybatisDemo/demo/demo/sql/03-verify.sql"
+$projectRoot = (Get-Location).Path.Replace('\', '/')
+mysql -u root -p --default-character-set=utf8mb4 -e "source $projectRoot/sql/00-create-database.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source $projectRoot/sql/01-schema.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source $projectRoot/sql/02-data.sql"
+mysql -u root -p --default-character-set=utf8mb4 -e "source $projectRoot/sql/03-verify.sql"
 ```
 
 `01-schema.sql` 会删除同名业务表，只应在开发环境或首次初始化时执行。

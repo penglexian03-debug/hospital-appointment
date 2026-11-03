@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="前端服务" type="js.build_tools.npm" factoryName="npm">
-    <package-json value="$PROJECT_DIR$/frontend/package.json" />
+    <package-json value="C:\Users\19097\Downloads\MybatisDemo\医院预约挂号系统\demo\frontend\package.json" />
     <command value="run" />
     <scripts>
       <script value="dev" />
