@@ -18,13 +18,47 @@
 
 ## 界面预览
 
-| 登录页 | 个人中心 + AI 助手 |
-|---|---|
-| ![登录页](docs/screenshots/01-login.png) | ![个人中心](docs/screenshots/02-patient-profile-ai.png) |
+### 一、患者端：从找科室到成功预约
 
-| AI 导诊问答（真实号源 + 知识库） | 移动端适配 |
+**① 科室导航** — 按科室查看简介、就诊位置与联系电话
+
+![科室导航](docs/screenshots/03-departments.png)
+
+**② 医生团队** — 按科室筛选医生，查看职称、擅长方向与出诊排班
+
+![医生团队](docs/screenshots/04-doctors.png)
+
+**③ 预约挂号** — 按科室 / 医生 / 时段 / 日期范围筛选，支持「仅看有号」，实时显示剩余号源
+
+![预约挂号](docs/screenshots/05-schedules.png)
+
+**④ 确认预约** — 填写就诊人信息，提交前再次核对号源、时段与挂号费
+
+![确认预约](docs/screenshots/06-booking-confirm.png)
+
+**⑤ 我的预约** — 按「待就诊 / 已完成 / 已取消 / 爽约」筛选历史记录；右侧为 AI 助手生成的预约确认单
+
+![我的预约](docs/screenshots/07-my-appointments.png)
+
+### 二、AI 智能导诊助手
+
+自然语言查询真实号源、医院就诊须知，预约/取消先生成确认单，用户确认后才执行。
+
+| 对话式查号源 | 移动端适配 |
 |---|---|
-| ![AI 回复](docs/screenshots/03-ai-reply.png) | ![移动端](docs/screenshots/04-mobile.png) |
+| ![AI 对话](docs/screenshots/10-ai-reply.png) | ![移动端](docs/screenshots/11-mobile.png) |
+
+### 三、管理后台
+
+科室维护：新增、编辑、启停，支持条件查询与分页；医生、排班、预约、用户管理为同构页面。
+
+![科室管理](docs/screenshots/09-admin-departments.png)
+
+### 四、账号与个人中心
+
+| 登录 | 注册 | 个人中心 |
+|---|---|---|
+| ![登录](docs/screenshots/01-login.png) | ![注册](docs/screenshots/02-register.png) | ![个人中心](docs/screenshots/08-profile.png) |
 
 ## 项目亮点
 
