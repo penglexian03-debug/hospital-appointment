@@ -46,13 +46,23 @@
 
 | 对话式查号源 | 移动端适配 |
 |---|---|
-| ![AI 对话](docs/screenshots/10-ai-reply.png) | ![移动端](docs/screenshots/11-mobile.png) |
+| ![AI 对话](docs/screenshots/14-ai-reply.png) | ![移动端](docs/screenshots/15-mobile.png) |
 
 ### 三、管理后台
 
-科室维护：新增、编辑、启停，支持条件查询与分页；医生、排班、预约、用户管理为同构页面。
+五个模块统一为「条件查询 + 分页表格 + 状态启停」：科室、医生、排班、预约、用户。
+
+**科室维护** — 新增、编辑、启用/停用，支持按名称/编码查询
 
 ![科室管理](docs/screenshots/09-admin-departments.png)
+
+| 医生档案 | 排班计划 |
+|---|---|
+| ![医生管理](docs/screenshots/10-admin-doctors.png) | ![排班管理](docs/screenshots/11-admin-schedules.png) |
+
+| 预约记录 | 系统用户 |
+|---|---|
+| ![预约管理](docs/screenshots/12-admin-appointments.png) | ![用户管理](docs/screenshots/13-admin-users.png) |
 
 ### 四、账号与个人中心
 
